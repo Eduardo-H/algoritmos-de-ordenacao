@@ -68,6 +68,10 @@ public class Main {
 		vetor[fim] = aux;
 		return pIndice;
 	}
+	
+	public static void ordenarQuickList(List<Integer> lista) {
+		
+	}
 
 	public static void main(String[] args) throws IOException {
 		Socket socket;
@@ -129,14 +133,25 @@ public class Main {
 						break;
 				}
 			} else if (Integer.valueOf(msgCliente) == 2) {
-				List<Integer> lista = new ArrayList<Integer>();
+				List<Elemento> lista = new ArrayList<Elemento>();
+				Elemento elemento = null;
 				
 				// Recebendo os valores do cliente
 				for (int i = 0; i < 10; i++) {
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
 					
-					lista.add(Integer.valueOf(msgCliente));
+					// Atribuindo os valores recebidos na lista
+					if (elemento == null) {
+						elemento.setValor(Integer.valueOf(msgCliente));
+						elemento.setPosicao(i);
+						elemento.setProx(null);
+					} else {
+						Elemento novo_elemento = new Elemento(Integer.valueOf(msgCliente), i);
+						elemento.setProx(novo_elemento);
+						lista.add(novo_elemento);
+						elemento = novo_elemento;
+					}
 					
 					resposta.writeBytes("Valor recebido e armazenado: " + msgCliente);
 					resposta.writeBytes("\n"); // Fim da linha
@@ -146,9 +161,9 @@ public class Main {
 				System.out.print("[");
 				for (int i = 0; i < 10; i++) {
 					if (i != 9)
-						System.out.print(lista.get(i) + ", ");
+						System.out.print(lista.get(i).getValor() + ", ");
 					else
-						System.out.print(lista.get(i));
+						System.out.print(lista.get(i).getValor());
 				}
 				System.out.print("]");
 				
