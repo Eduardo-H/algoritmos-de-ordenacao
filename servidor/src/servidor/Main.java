@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Main {
 
-	public static void ordenarBubbleVetor(int vetor[],int n) {
+	public static int[] ordenarBubbleVetor(int vetor[],int n) {
 		int aux;
 		boolean troca;
 		
@@ -30,19 +30,12 @@ public class Main {
 				break;
 		}
 		
-		System.out.print("[");
-		for (int i=0; i < n; i++) {
-			if (i != n-1)
-				System.out.print(vetor[i] + ", ");
-			else
-				System.out.print(vetor[i]);
-		}
-		System.out.print("]");
+		return vetor;
 	}
 	
 	public static int[] ordenarQuickVetor(int vetor[], int inicio, int fim) {
 		if (inicio < fim) {
-			int pIndice = QuickTroca(vetor, inicio, fim);
+			int pIndice = quickTrocaVetor(vetor, inicio, fim);
 			ordenarQuickVetor(vetor, inicio, pIndice - 1);
 			ordenarQuickVetor(vetor, pIndice + 1, fim);
 		}
@@ -50,7 +43,7 @@ public class Main {
 		return vetor;
 	}
 
-	public static int QuickTroca(int vetor[], int inicio, int fim) {
+	public static int quickTrocaVetor(int vetor[], int inicio, int fim) {
 		int aux;
 		int pivot = vetor[fim];
 		int pIndice = inicio;
@@ -66,16 +59,66 @@ public class Main {
 		aux = vetor[pIndice];
 		vetor[pIndice] = vetor[fim];
 		vetor[fim] = aux;
+		
 		return pIndice;
 	}
 	
-	public static void ordenarQuickList(List<Integer> lista) {
+	public static List<Elemento> ordenarBubbleLista(List<Elemento> lista, int n) {
+		int aux;
+		boolean troca;
 		
+		for(int i=0; i<n-1; i++) {
+			troca = false;
+			for(int j=0; j<n-1; j++) {
+				if(lista.get(j).getValor() > lista.get(j+1).getValor()) {
+					aux = lista.get(j).getValor();
+					lista.get(j).setValor(lista.get(j+1).getValor());
+					lista.get(j+1).setValor(aux);
+					troca = true;
+				}
+			}
+			if(troca == false)
+				break;
+		}
+		
+		return lista;
+	}
+	
+	public static List<Elemento> ordenarQuickLista(List<Elemento> lista, int inicio, int fim) {
+		if (inicio < fim) {
+			int pIndice = quickTrocaLista(lista, inicio, fim);
+			ordenarQuickLista(lista, inicio, pIndice - 1);
+			ordenarQuickLista(lista, pIndice + 1, fim);
+		}
+		
+		return lista;
 	}
 
+	public static int quickTrocaLista(List<Elemento> lista, int inicio, int fim) {
+		int aux;
+		int pivot = lista.get(fim).getValor();
+		int pIndice = inicio;
+		
+		for (int i = inicio; i < fim; i++) {
+			if (lista.get(i).getValor() <= pivot) {
+				aux = lista.get(i).getValor();
+				lista.get(i).setValor(lista.get(pIndice).getValor());
+				lista.get(pIndice).setValor(aux);
+				pIndice++;
+			}
+		}
+		
+		aux = lista.get(pIndice).getValor();
+		lista.get(pIndice).setValor(lista.get(fim).getValor());
+		lista.get(fim).setValor(aux);
+		
+		return pIndice;
+	}
+	
 	public static void main(String[] args) throws IOException {
 		Socket socket;
 		ServerSocket socketServidor = new ServerSocket(2800);;
+		long inicio, fim;
 		
 		while (true) {
 			System.out.println("Aguardando mensagem...");
@@ -116,10 +159,9 @@ public class Main {
 				
 				switch (Integer.valueOf(msgCliente)) {
 					case 1:
-						ordenarBubbleVetor(vetor, 10);
-						break;
-					case 2:
-						vetor = ordenarQuickVetor(vetor, 0, 9);
+						inicio = System.currentTimeMillis();
+						vetor = ordenarBubbleVetor(vetor, 10);
+						fim = System.currentTimeMillis() - inicio;
 						
 						System.out.print("[");
 						for (int i = 0; i < 10; i++) {
@@ -130,11 +172,33 @@ public class Main {
 						}
 						System.out.print("]");
 						System.out.println();
+						
+						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
+								+ "Tempo para ordenação em segundos: " + fim/1000 + "s");
+						
+						break;
+					case 2:
+						inicio = System.currentTimeMillis();
+						vetor = ordenarQuickVetor(vetor, 0, 9);
+						fim = System.currentTimeMillis() - inicio;
+						
+						System.out.print("[");
+						for (int i = 0; i < 10; i++) {
+							if (i != 9)
+								System.out.print(vetor[i] + ", ");
+							else
+								System.out.print(vetor[i]);
+						}
+						System.out.print("]");
+						System.out.println();
+						
+						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
+								+ "Tempo para ordenação em segundos: " + fim/1000 + "s");
 						break;
 				}
 			} else if (Integer.valueOf(msgCliente) == 2) {
+				Elemento elemento = new Elemento(-1, 0);
 				List<Elemento> lista = new ArrayList<Elemento>();
-				Elemento elemento = null;
 				
 				// Recebendo os valores do cliente
 				for (int i = 0; i < 10; i++) {
@@ -142,17 +206,17 @@ public class Main {
 					msgCliente = requisicao.readLine();
 					
 					// Atribuindo os valores recebidos na lista
-					if (elemento == null) {
+					if (elemento.getValor() == -1) {
 						elemento.setValor(Integer.valueOf(msgCliente));
 						elemento.setPosicao(i);
-						elemento.setProx(null);
+						lista.add(elemento);
 					} else {
 						Elemento novo_elemento = new Elemento(Integer.valueOf(msgCliente), i);
 						elemento.setProx(novo_elemento);
 						lista.add(novo_elemento);
 						elemento = novo_elemento;
 					}
-					
+
 					resposta.writeBytes("Valor recebido e armazenado: " + msgCliente);
 					resposta.writeBytes("\n"); // Fim da linha
 					resposta.flush(); // Manda para o cliente
@@ -166,14 +230,47 @@ public class Main {
 						System.out.print(lista.get(i).getValor());
 				}
 				System.out.print("]");
+				System.out.println();
 				
 				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				msgCliente = requisicao.readLine();
 				
 				switch (Integer.valueOf(msgCliente)) {
 					case 1:
+						inicio = System.currentTimeMillis();
+						lista = ordenarBubbleLista(lista, lista.size());
+						fim = System.currentTimeMillis() - inicio;
+						
+						System.out.print("[");
+						for (int i = 0; i < 10; i++) {
+							if (i != 9)
+								System.out.print(lista.get(i).getValor() + ", ");
+							else
+								System.out.print(lista.get(i).getValor());
+						}
+						System.out.print("]");
+						System.out.println();
+						
+						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
+								+ "Tempo para ordenação em segundos: " + fim/1000 + "s");
 						break;
 					case 2:
+						inicio = System.currentTimeMillis();
+						lista = ordenarQuickLista(lista, 0, 9);
+						fim = System.currentTimeMillis() - inicio;
+						
+						System.out.print("[");
+						for (int i = 0; i < 10; i++) {
+							if (i != 9)
+								System.out.print(lista.get(i).getValor() + ", ");
+							else
+								System.out.print(lista.get(i).getValor());
+						}
+						System.out.print("]");
+						System.out.println();
+						
+						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
+								+ "Tempo para ordenação em segundos: " + fim/1000 + "s");
 						break;
 				}
 			} else if (Integer.valueOf(msgCliente) == 3) {
@@ -189,9 +286,11 @@ public class Main {
 					resposta.writeBytes("\n"); // Fim da linha
 					resposta.flush(); // Manda para o cliente
 				}
-
+				
+				inicio = System.currentTimeMillis();
 				Arrays.sort(vetor); // Estrutura de ordenação da linguagem
-
+				fim = System.currentTimeMillis() - inicio;
+				
 				System.out.print("[");
 				for (int i = 0; i < 10; i++) {
 					if (i != 9)
@@ -200,6 +299,9 @@ public class Main {
 						System.out.print(vetor[i]);
 				}
 				System.out.print("]");
+				
+				System.out.println("\nTempo para ordenação em milisegundos: " + fim + "\n"
+						+ "Tempo para ordenação em segundos: " + fim/1000);
 			}
 						
 			System.out.println();
