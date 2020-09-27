@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
@@ -69,8 +72,6 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Socket socket;
 		ServerSocket socketServidor = new ServerSocket(2800);;
-
-		int vetor[] = new int[10];
 		
 		while (true) {
 			System.out.println("Aguardando mensagem...");
@@ -81,8 +82,10 @@ public class Main {
 			
 			DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
 			if (Integer.valueOf(msgCliente) == 1) {
+				int vetor[] = new int[10];
+				
+				// Recebendo os valores do cliente
 				for (int i = 0; i < 10; i++) {
-					// System.out.println((i + 1) + " valores armazenados.");
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
 					
@@ -126,61 +129,62 @@ public class Main {
 						break;
 				}
 			} else if (Integer.valueOf(msgCliente) == 2) {
+				List<Integer> lista = new ArrayList<Integer>();
+				
+				// Recebendo os valores do cliente
 				for (int i = 0; i < 10; i++) {
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
+					
+					lista.add(Integer.valueOf(msgCliente));
 					
 					resposta.writeBytes("Valor recebido e armazenado: " + msgCliente);
 					resposta.writeBytes("\n"); // Fim da linha
 					resposta.flush(); // Manda para o cliente
 				}
 				
+				System.out.print("[");
+				for (int i = 0; i < 10; i++) {
+					if (i != 9)
+						System.out.print(lista.get(i) + ", ");
+					else
+						System.out.print(lista.get(i));
+				}
+				System.out.print("]");
+				
 				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				msgCliente = requisicao.readLine();
 				
 				switch (Integer.valueOf(msgCliente)) {
 					case 1:
-						System.out.print("[");
-						for (int i = 0; i < 10; i++) {
-							System.out.print(vetor[i] + ", ");
-						}
-						System.out.print("]");
-						System.out.println();
-						
-						ordenarBubbleVetor(vetor, 10);
 						break;
 					case 2:
-						System.out.println("Escolheu n.log(n)");
 						break;
 				}
 			} else if (Integer.valueOf(msgCliente) == 3) {
+				int vetor[] = new int[10];
+				
 				for (int i = 0; i < 10; i++) {
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
-					
+
+					vetor[i] = Integer.valueOf(msgCliente);
+
 					resposta.writeBytes("Valor recebido e armazenado: " + msgCliente);
 					resposta.writeBytes("\n"); // Fim da linha
 					resposta.flush(); // Manda para o cliente
 				}
-				
-				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				msgCliente = requisicao.readLine();
-				
-				switch (Integer.valueOf(msgCliente)) {
-					case 1:
-						System.out.print("[");
-						for (int i = 0; i < 10; i++) {
-							System.out.print(vetor[i] + ", ");
-						}
-						System.out.print("]");
-						System.out.println();
-						
-						ordenarBubbleVetor(vetor, 10);
-						break;
-					case 2:
-						System.out.println("Escolheu n.log(n)");
-						break;
+
+				Arrays.sort(vetor); // Estrutura de ordenação da linguagem
+
+				System.out.print("[");
+				for (int i = 0; i < 10; i++) {
+					if (i != 9)
+						System.out.print(vetor[i] + ", ");
+					else
+						System.out.print(vetor[i]);
 				}
+				System.out.print("]");
 			}
 						
 			System.out.println();
