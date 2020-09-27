@@ -43,7 +43,7 @@ public class Main {
 				numero = aleatorio.nextInt(20);
 				
 				try {
-					System.out.println("Enviou " + numero);
+					// System.out.println("Enviou " + numero);
 					msgCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())); 
 					msgCliente.write(String.valueOf(numero)); // Armazenda a mensagem a ser enviada
 					msgCliente.write("\n"); // Fim da linha

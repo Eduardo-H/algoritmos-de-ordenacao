@@ -29,9 +29,41 @@ public class Main {
 		
 		System.out.print("[");
 		for (int i=0; i < n; i++) {
-			System.out.print(vetor[i] + ", ");
+			if (i != n-1)
+				System.out.print(vetor[i] + ", ");
+			else
+				System.out.print(vetor[i]);
 		}
 		System.out.print("]");
+	}
+	
+	public static int[] ordenarQuickVetor(int vetor[], int inicio, int fim) {
+		if (inicio < fim) {
+			int pIndice = QuickTroca(vetor, inicio, fim);
+			ordenarQuickVetor(vetor, inicio, pIndice - 1);
+			ordenarQuickVetor(vetor, pIndice + 1, fim);
+		}
+		
+		return vetor;
+	}
+
+	public static int QuickTroca(int vetor[], int inicio, int fim) {
+		int aux;
+		int pivot = vetor[fim];
+		int pIndice = inicio;
+		
+		for (int i = inicio; i < fim; i++) {
+			if (vetor[i] <= pivot) {
+				aux = vetor[i];
+				vetor[i] = vetor[pIndice];
+				vetor[pIndice] = aux;
+				pIndice++;
+			}
+		}
+		aux = vetor[pIndice];
+		vetor[pIndice] = vetor[fim];
+		vetor[fim] = aux;
+		return pIndice;
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -50,7 +82,7 @@ public class Main {
 			DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
 			if (Integer.valueOf(msgCliente) == 1) {
 				for (int i = 0; i < 10; i++) {
-					System.out.println((i + 1) + " valores armazenados.");
+					// System.out.println((i + 1) + " valores armazenados.");
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
 					
@@ -61,21 +93,36 @@ public class Main {
 					resposta.flush(); // Manda para o cliente
 				}
 				
+				// Mostrando o vetor desordenado
+				System.out.print("[");
+				for (int i = 0; i < 10; i++) {
+					if (i != 9)
+						System.out.print(vetor[i] + ", ");
+					else
+						System.out.print(vetor[i]);
+				}
+				System.out.print("]");
+				System.out.println();
+				
 				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				msgCliente = requisicao.readLine();
 				
 				switch (Integer.valueOf(msgCliente)) {
 					case 1:
-						System.out.print("[");
-						for (int i = 0; i < 10; i++) {
-							System.out.print(vetor[i] + ", ");
-						}
-						System.out.print("]");
-						System.out.println();
-						
 						ordenarBubbleVetor(vetor, 10);
 						break;
 					case 2:
+						vetor = ordenarQuickVetor(vetor, 0, 9);
+						
+						System.out.print("[");
+						for (int i = 0; i < 10; i++) {
+							if (i != 9)
+								System.out.print(vetor[i] + ", ");
+							else
+								System.out.print(vetor[i]);
+						}
+						System.out.print("]");
+						System.out.println();
 						break;
 				}
 			} else if (Integer.valueOf(msgCliente) == 2) {
