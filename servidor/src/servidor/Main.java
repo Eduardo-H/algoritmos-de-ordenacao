@@ -119,6 +119,7 @@ public class Main {
 		Socket socket;
 		ServerSocket socketServidor = new ServerSocket(2800);;
 		long inicio, fim;
+		Runtime rt;
 		
 		while (true) {
 			System.out.println("Aguardando mensagem...");
@@ -129,10 +130,10 @@ public class Main {
 			
 			DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
 			if (Integer.valueOf(msgCliente) == 1) {
-				int vetor[] = new int[10];
+				int vetor[] = new int[20];
 				
 				// Recebendo os valores do cliente
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < 20; i++) {
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
 					
@@ -144,34 +145,36 @@ public class Main {
 				}
 				
 				// Mostrando o vetor desordenado
-				System.out.print("[");
-				for (int i = 0; i < 10; i++) {
-					if (i != 9)
-						System.out.print(vetor[i] + ", ");
-					else
-						System.out.print(vetor[i]);
-				}
-				System.out.print("]");
-				System.out.println();
+//				System.out.print("[");
+//				for (int i = 0; i < 100000; i++) {
+//					if (i != 9)
+//						System.out.print(vetor[i] + ", ");
+//					else
+//						System.out.print(vetor[i]);
+//				}
+//				System.out.print("]");
+//				System.out.println();
 				
 				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				msgCliente = requisicao.readLine();
 				
 				switch (Integer.valueOf(msgCliente)) {
 					case 1:
+						rt = Runtime.getRuntime();
 						inicio = System.currentTimeMillis();
-						vetor = ordenarBubbleVetor(vetor, 10);
+						vetor = ordenarBubbleVetor(vetor, 20);
 						fim = System.currentTimeMillis() - inicio;
+						System.out.println("Memória usada: " + (Runtime.getRuntime().freeMemory() - rt.freeMemory()));
 						
-						System.out.print("[");
-						for (int i = 0; i < 10; i++) {
-							if (i != 9)
-								System.out.print(vetor[i] + ", ");
-							else
-								System.out.print(vetor[i]);
-						}
-						System.out.print("]");
-						System.out.println();
+//						System.out.print("[");
+//						for (int i = 0; i < 10; i++) {
+//							if (i != 9)
+//								System.out.print(vetor[i] + ", ");
+//							else
+//								System.out.print(vetor[i]);
+//						}
+//						System.out.print("]");
+//						System.out.println();
 						
 						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
 								+ "Tempo para ordenação em segundos: " + fim/1000 + "s");
