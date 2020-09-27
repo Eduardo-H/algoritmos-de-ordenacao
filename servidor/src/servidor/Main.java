@@ -16,9 +16,9 @@ public class Main {
 		int aux;
 		boolean troca;
 		
-		for(int i=0; i<n-1; i++) {
+		for(int i = 0; i < n-1; i++) {
 			troca = false;
-			for(int j=0; j<n-1; j++) {
+			for(int j=0; j < n-1; j++) {
 				if(vetor[j] > vetor[(j+1)]) {
 					aux = vetor[j];
 					vetor[j] = vetor[(j+1)];
@@ -53,7 +53,7 @@ public class Main {
 				aux = vetor[i];
 				vetor[i] = vetor[pIndice];
 				vetor[pIndice] = aux;
-				pIndice++;
+				pIndice ++;
 			}
 		}
 		aux = vetor[pIndice];
@@ -67,9 +67,9 @@ public class Main {
 		int aux;
 		boolean troca;
 		
-		for(int i=0; i<n-1; i++) {
+		for(int i = 0; i < n-1; i++) {
 			troca = false;
-			for(int j=0; j<n-1; j++) {
+			for(int j = 0; j < n-1; j++) {
 				if(lista.get(j).getValor() > lista.get(j+1).getValor()) {
 					aux = lista.get(j).getValor();
 					lista.get(j).setValor(lista.get(j+1).getValor());
@@ -104,7 +104,7 @@ public class Main {
 				aux = lista.get(i).getValor();
 				lista.get(i).setValor(lista.get(pIndice).getValor());
 				lista.get(pIndice).setValor(aux);
-				pIndice++;
+				pIndice ++;
 			}
 		}
 		
@@ -129,31 +129,33 @@ public class Main {
 			String msgCliente = requisicao.readLine();
 			
 			DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
+			
+			// Verificando qual tipo de estrura o cliente escolheu
 			if (Integer.valueOf(msgCliente) == 1) {
 				int vetor[] = new int[20];
 				
 				// Recebendo os valores do cliente
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0; i < vetor.length; i++) {
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
 					
 					vetor[i] = Integer.valueOf(msgCliente);
 					
-					resposta.writeBytes("Valor recebido e armazenado: " + msgCliente);
+					resposta.writeBytes("Valor " + msgCliente + " recebido e armazenado");
 					resposta.writeBytes("\n"); // Fim da linha
 					resposta.flush(); // Manda para o cliente
 				}
 				
-				// Mostrando o vetor desordenado
-//				System.out.print("[");
-//				for (int i = 0; i < 100000; i++) {
-//					if (i != 9)
-//						System.out.print(vetor[i] + ", ");
-//					else
-//						System.out.print(vetor[i]);
-//				}
-//				System.out.print("]");
-//				System.out.println();
+				// Imprimindo o vetor desordenado
+				System.out.print("[");
+				for (int i = 0; i < vetor.length; i++) {
+					if (i != vetor.length - 1)
+						System.out.print(vetor[i] + ", ");
+					else
+						System.out.print(vetor[i]);
+				}
+				System.out.print("]");
+				System.out.println();
 				
 				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				msgCliente = requisicao.readLine();
@@ -162,19 +164,20 @@ public class Main {
 					case 1:
 						rt = Runtime.getRuntime();
 						inicio = System.currentTimeMillis();
-						vetor = ordenarBubbleVetor(vetor, 20);
+						vetor = ordenarBubbleVetor(vetor, vetor.length);
 						fim = System.currentTimeMillis() - inicio;
 						System.out.println("Memória usada: " + (Runtime.getRuntime().freeMemory() - rt.freeMemory()));
 						
-//						System.out.print("[");
-//						for (int i = 0; i < 10; i++) {
-//							if (i != 9)
-//								System.out.print(vetor[i] + ", ");
-//							else
-//								System.out.print(vetor[i]);
-//						}
-//						System.out.print("]");
-//						System.out.println();
+						// Imprimindo o vetor ordenado
+						System.out.print("[");
+						for (int i = 0; i < vetor.length; i++) {
+							if (i != vetor.length - 1)
+								System.out.print(vetor[i] + ", ");
+							else
+								System.out.print(vetor[i]);
+						}
+						System.out.print("]");
+						System.out.println();
 						
 						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
 								+ "Tempo para ordenação em segundos: " + fim/1000 + "s");
@@ -182,9 +185,10 @@ public class Main {
 						break;
 					case 2:
 						inicio = System.currentTimeMillis();
-						vetor = ordenarQuickVetor(vetor, 0, 9);
+						vetor = ordenarQuickVetor(vetor, 0, vetor.length - 1);
 						fim = System.currentTimeMillis() - inicio;
 						
+						// Imprimindo o vetor ordenado
 						System.out.print("[");
 						for (int i = 0; i < 10; i++) {
 							if (i != 9)
@@ -204,7 +208,7 @@ public class Main {
 				List<Elemento> lista = new ArrayList<Elemento>();
 				
 				// Recebendo os valores do cliente
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < 20; i++) {
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
 					
@@ -220,14 +224,15 @@ public class Main {
 						elemento = novo_elemento;
 					}
 
-					resposta.writeBytes("Valor recebido e armazenado: " + msgCliente);
+					resposta.writeBytes("Valor " + msgCliente + " recebido e armazenado");
 					resposta.writeBytes("\n"); // Fim da linha
 					resposta.flush(); // Manda para o cliente
 				}
 				
+				// Imprimindo o vetor desordenado
 				System.out.print("[");
-				for (int i = 0; i < 10; i++) {
-					if (i != 9)
+				for (int i = 0; i < lista.size(); i++) {
+					if (i != lista.size() - 1)
 						System.out.print(lista.get(i).getValor() + ", ");
 					else
 						System.out.print(lista.get(i).getValor());
@@ -244,9 +249,10 @@ public class Main {
 						lista = ordenarBubbleLista(lista, lista.size());
 						fim = System.currentTimeMillis() - inicio;
 						
+						// Imprimindo o vetor ordenado
 						System.out.print("[");
-						for (int i = 0; i < 10; i++) {
-							if (i != 9)
+						for (int i = 0; i < lista.size(); i++) {
+							if (i != lista.size() - 1)
 								System.out.print(lista.get(i).getValor() + ", ");
 							else
 								System.out.print(lista.get(i).getValor());
@@ -259,12 +265,13 @@ public class Main {
 						break;
 					case 2:
 						inicio = System.currentTimeMillis();
-						lista = ordenarQuickLista(lista, 0, 9);
+						lista = ordenarQuickLista(lista, 0, lista.size() - 1);
 						fim = System.currentTimeMillis() - inicio;
 						
+						// Imprimindo o vetor ordenado
 						System.out.print("[");
-						for (int i = 0; i < 10; i++) {
-							if (i != 9)
+						for (int i = 0; i < lista.size(); i++) {
+							if (i != lista.size() - 1)
 								System.out.print(lista.get(i).getValor() + ", ");
 							else
 								System.out.print(lista.get(i).getValor());
@@ -277,26 +284,38 @@ public class Main {
 						break;
 				}
 			} else if (Integer.valueOf(msgCliente) == 3) {
-				int vetor[] = new int[10];
+				int vetor[] = new int[20];
 				
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < vetor.length; i++) {
 					requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					msgCliente = requisicao.readLine();
 
 					vetor[i] = Integer.valueOf(msgCliente);
 
-					resposta.writeBytes("Valor recebido e armazenado: " + msgCliente);
+					resposta.writeBytes("Valor " + msgCliente + " recebido e armazenado");
 					resposta.writeBytes("\n"); // Fim da linha
 					resposta.flush(); // Manda para o cliente
 				}
+				
+				// Imprimindo o vetor desordenado
+				System.out.print("[");
+				for (int i = 0; i < vetor.length; i++) {
+					if (i != vetor.length - 1)
+						System.out.print(vetor[i] + ", ");
+					else
+						System.out.print(vetor[i]);
+				}
+				System.out.print("]");
+				System.out.println();
 				
 				inicio = System.currentTimeMillis();
 				Arrays.sort(vetor); // Estrutura de ordenação da linguagem
 				fim = System.currentTimeMillis() - inicio;
 				
+				// Imprimindo o vetor ordenado
 				System.out.print("[");
-				for (int i = 0; i < 10; i++) {
-					if (i != 9)
+				for (int i = 0; i < vetor.length; i++) {
+					if (i != vetor.length - 1)
 						System.out.print(vetor[i] + ", ");
 					else
 						System.out.print(vetor[i]);
