@@ -39,8 +39,8 @@ public class Main {
 			msgCliente.write("\n"); //Fim da linha
 			msgCliente.flush(); // Envia
 			
-			for (int i = 0; i < 25; i++) {
-				numero = aleatorio.nextInt(1000000);
+			for (int i = 0; i < 10; i++) {
+				numero = aleatorio.nextInt(20);
 				
 				try {
 					System.out.println("Enviou " + numero);
