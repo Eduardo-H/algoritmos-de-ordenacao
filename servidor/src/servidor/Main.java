@@ -115,6 +115,28 @@ public class Main {
 		return pIndice;
 	}
 	
+	public static void imprimirVetor(int[] vetor) {
+		System.out.print("[");
+		for (int i = 0; i < vetor.length; i++) {
+			if (i != vetor.length - 1)
+				System.out.print(vetor[i] + ", ");
+			else
+				System.out.print(vetor[i]);
+		}
+		System.out.print("]");
+	}
+	
+	public static void imprimirLista(List<Elemento> lista) {
+		System.out.print("[");
+		for (int i = 0; i < lista.size(); i++) {
+			if (i != lista.size() - 1)
+				System.out.print(lista.get(i).getValor() + ", ");
+			else
+				System.out.print(lista.get(i).getValor());
+		}
+		System.out.print("]");
+	}
+	
 	public static void main(String[] args) throws IOException {
 		Socket socket;
 		ServerSocket socketServidor = new ServerSocket(2800);;
@@ -147,14 +169,7 @@ public class Main {
 				}
 				
 				// Imprimindo o vetor desordenado
-				System.out.print("[");
-				for (int i = 0; i < vetor.length; i++) {
-					if (i != vetor.length - 1)
-						System.out.print(vetor[i] + ", ");
-					else
-						System.out.print(vetor[i]);
-				}
-				System.out.print("]");
+				imprimirVetor(vetor);
 				System.out.println();
 				
 				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -169,14 +184,7 @@ public class Main {
 						System.out.println("Memória usada: " + (Runtime.getRuntime().freeMemory() - rt.freeMemory()));
 						
 						// Imprimindo o vetor ordenado
-						System.out.print("[");
-						for (int i = 0; i < vetor.length; i++) {
-							if (i != vetor.length - 1)
-								System.out.print(vetor[i] + ", ");
-							else
-								System.out.print(vetor[i]);
-						}
-						System.out.print("]");
+						imprimirVetor(vetor);
 						System.out.println();
 						
 						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
@@ -189,14 +197,7 @@ public class Main {
 						fim = System.currentTimeMillis() - inicio;
 						
 						// Imprimindo o vetor ordenado
-						System.out.print("[");
-						for (int i = 0; i < 10; i++) {
-							if (i != 9)
-								System.out.print(vetor[i] + ", ");
-							else
-								System.out.print(vetor[i]);
-						}
-						System.out.print("]");
+						imprimirVetor(vetor);
 						System.out.println();
 						
 						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
@@ -229,15 +230,8 @@ public class Main {
 					resposta.flush(); // Manda para o cliente
 				}
 				
-				// Imprimindo o vetor desordenado
-				System.out.print("[");
-				for (int i = 0; i < lista.size(); i++) {
-					if (i != lista.size() - 1)
-						System.out.print(lista.get(i).getValor() + ", ");
-					else
-						System.out.print(lista.get(i).getValor());
-				}
-				System.out.print("]");
+				// Imprimindo a lista desordenada
+				imprimirLista(lista);
 				System.out.println();
 				
 				requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -249,15 +243,8 @@ public class Main {
 						lista = ordenarBubbleLista(lista, lista.size());
 						fim = System.currentTimeMillis() - inicio;
 						
-						// Imprimindo o vetor ordenado
-						System.out.print("[");
-						for (int i = 0; i < lista.size(); i++) {
-							if (i != lista.size() - 1)
-								System.out.print(lista.get(i).getValor() + ", ");
-							else
-								System.out.print(lista.get(i).getValor());
-						}
-						System.out.print("]");
+						// Imprimindo a lista ordenada
+						imprimirLista(lista);
 						System.out.println();
 						
 						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
@@ -268,15 +255,8 @@ public class Main {
 						lista = ordenarQuickLista(lista, 0, lista.size() - 1);
 						fim = System.currentTimeMillis() - inicio;
 						
-						// Imprimindo o vetor ordenado
-						System.out.print("[");
-						for (int i = 0; i < lista.size(); i++) {
-							if (i != lista.size() - 1)
-								System.out.print(lista.get(i).getValor() + ", ");
-							else
-								System.out.print(lista.get(i).getValor());
-						}
-						System.out.print("]");
+						// Imprimindo a lista ordenada
+						imprimirLista(lista);
 						System.out.println();
 						
 						System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
@@ -298,14 +278,7 @@ public class Main {
 				}
 				
 				// Imprimindo o vetor desordenado
-				System.out.print("[");
-				for (int i = 0; i < vetor.length; i++) {
-					if (i != vetor.length - 1)
-						System.out.print(vetor[i] + ", ");
-					else
-						System.out.print(vetor[i]);
-				}
-				System.out.print("]");
+				imprimirVetor(vetor);
 				System.out.println();
 				
 				inicio = System.currentTimeMillis();
@@ -313,14 +286,8 @@ public class Main {
 				fim = System.currentTimeMillis() - inicio;
 				
 				// Imprimindo o vetor ordenado
-				System.out.print("[");
-				for (int i = 0; i < vetor.length; i++) {
-					if (i != vetor.length - 1)
-						System.out.print(vetor[i] + ", ");
-					else
-						System.out.print(vetor[i]);
-				}
-				System.out.print("]");
+				imprimirVetor(vetor);
+				System.out.println();
 				
 				System.out.println("\nTempo para ordenação em milisegundos: " + fim + "\n"
 						+ "Tempo para ordenação em segundos: " + fim/1000);
