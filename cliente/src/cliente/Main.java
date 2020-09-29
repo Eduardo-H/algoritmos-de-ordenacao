@@ -36,8 +36,8 @@ public class Main {
 				mandarMensagem("atribuicaoVetor", String.valueOf(numero));
 				System.out.println("Número enviado: " + numero);
 				
-				msgServidor = leitorServidor.readLine(); // Lê a resposta
-				System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem
+//				msgServidor = leitorServidor.readLine(); // Lê a resposta
+//				System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem
 			} catch (UnknownHostException e) {
 				System.out.println(e);
 			} catch (IOException e2) {
@@ -54,8 +54,8 @@ public class Main {
 				mandarMensagem("atribuicaoLista", String.valueOf(numero));
 				System.out.println("Número enviado: " + numero);
 				
-				msgServidor = leitorServidor.readLine(); // Lê a resposta
-				System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem
+//				msgServidor = leitorServidor.readLine(); // Lê a resposta
+//				System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem
 			} catch (UnknownHostException e) {
 				System.out.println(e);
 			} catch (IOException e2) {
