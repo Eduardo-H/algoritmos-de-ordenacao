@@ -13,17 +13,60 @@ import java.net.UnknownHostException;
 
 public class Main {
 	
+	static int escolha, tipo, numero;
+	static Random aleatorio = new Random();
+	static BufferedWriter msgCliente;
+	static BufferedReader leitorServidor;
+	static String msgServidor;
+	static boolean recebeu;
+	static Socket socket;
+	
+	public static void mandarMensagem(String chave, String valor) throws UnknownHostException, IOException {
+		msgCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+		msgCliente.write(chave + ":" + valor); // Armazenda a mensagem a ser enviada
+		msgCliente.write("\n"); // Fim da linha
+		msgCliente.flush(); // Envia mensagem
+	}
+	
+	public static void atribuicaoVetor(int tamanho) {
+		for (int i = 0; i < tamanho; i++) {
+			int numero = aleatorio.nextInt(tamanho);
+
+			try {
+				mandarMensagem("atribuicaoVetor", String.valueOf(numero));
+				System.out.println("Número enviado: " + numero);
+				
+				msgServidor = leitorServidor.readLine(); // Lê a resposta
+				System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem
+			} catch (UnknownHostException e) {
+				System.out.println(e);
+			} catch (IOException e2) {
+				System.out.println(e2);
+			}
+		}
+	}
+	
+	public static void atribuicaoLista(int tamanho) {
+		for (int i = 0; i < tamanho; i++) {
+			int numero = aleatorio.nextInt(tamanho);
+
+			try {
+				mandarMensagem("atribuicaoLista", String.valueOf(numero));
+				System.out.println("Número enviado: " + numero);
+				
+				msgServidor = leitorServidor.readLine(); // Lê a resposta
+				System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem
+			} catch (UnknownHostException e) {
+				System.out.println(e);
+			} catch (IOException e2) {
+				System.out.println(e2);
+			}
+		}
+	}
+		
 	public static void main(String[] args) throws IOException {
-		
-		int escolha, tipo, numero;
 		Scanner leitor = new Scanner(System.in);
-		Random aleatorio = new Random();
 		
-		BufferedWriter msgCliente;
-		BufferedReader leitorServidor;
-		String msgServidor;
-		
-		Socket socket;
 		while(true) {
 			System.out.println("---------------------------------------");
 			System.out.println("|   Escolha o tipo de armazenamento   |");
@@ -34,33 +77,12 @@ public class Main {
 			System.out.println("---------------------------------------");
 			tipo = leitor.nextInt();
 			socket = new Socket("localhost", 2800);
-
-			msgCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			msgCliente.write(String.valueOf(tipo)); // Armazenda a mensagem a ser enviada
-			msgCliente.write("\n"); // Fim da linha
-			msgCliente.flush(); // Envia mensagem
-
-			for (int i = 0; i < 20; i++) {
-				numero = aleatorio.nextInt(100);
-
-				try {
-					// System.out.println("Enviou " + numero);
-					msgCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-					msgCliente.write(String.valueOf(numero)); // Armazenda a mensagem a ser enviada
-					msgCliente.write("\n"); // Fim da linha
-					msgCliente.flush(); // Envia mensagem
-
-					leitorServidor = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					msgServidor = leitorServidor.readLine(); // Lê a resposta
-					System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem
-				} catch (UnknownHostException e) {
-					System.out.println(e);
-				} catch (IOException e2) {
-					System.out.println(e2);
-				}
-			}
-
-			if (tipo == 1 || tipo == 2) {
+			
+			mandarMensagem("atribuicaoVetor", "1");
+			
+			if (tipo == 1 || tipo == 3) {
+				atribuicaoVetor(20);
+			
 				System.out.println("-----------------------------------");
 				System.out.println("|   Escolha o tipo de ordenação   |");
 				System.out.println("-----------------------------------");
@@ -68,39 +90,16 @@ public class Main {
 				System.out.println("|2 - n.log(n)                     |");
 				System.out.println("-----------------------------------");
 				escolha = leitor.nextInt();
-
-				switch (escolha) {
-					case 1:
-						msgCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-						msgCliente.write(String.valueOf(escolha)); // Armazenda a mensagem a ser enviada
-						msgCliente.write("\n"); // Fim da linha
-						msgCliente.flush(); // Envia mensagem
-
-						break;
-
-					case 2:
-						msgCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-						msgCliente.write(String.valueOf(escolha)); // Armazenda a mensagem a ser enviada
-						msgCliente.write("\n"); // Fim da linha
-						msgCliente.flush(); // Envia mensagem
-
-						break;
-
-					default:
-						System.out.println("Opção inválida");
-						break;
+				
+				if (escolha == 1 || escolha == 2) {
+					mandarMensagem("complexidade", String.valueOf(escolha));
+				} else {
+					System.out.println("Opção inválida.");
 				}
-
-			} else {
-				msgCliente = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-				msgCliente.write(String.valueOf(tipo)); // Armazenda a mensagem a ser enviada
-				msgCliente.write("\n"); // Fim da linha
-				msgCliente.flush(); // Envia mensagem
-			}
-			
-			msgCliente.close();
-			socket.close(); // Fechando o socket
+			} else if (tipo == 2)
+				atribuicaoLista(20);
+			else
+				System.out.println("Opção inválida.");
 		}
-
 	}
 }
