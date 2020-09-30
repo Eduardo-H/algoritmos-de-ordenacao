@@ -68,28 +68,28 @@ public class Main {
 		return pIndice;
 	}
 	
-	public static List<Elemento> ordenarBubbleLista(List<Elemento> lista, int n) {
-		int aux;
-		Elemento aux_lista = lista.get(0);
+	public static Elemento ordenarBubbleLista(Elemento elemento) {
+		Elemento primeiroElemento = elemento;
+		Elemento elemento_aux = elemento;
 		boolean troca;
+		int aux;
 		
-		for(int i = 0; i < n-1; i++) {
+		while (elemento.getProx() != null) {
 			troca = false;
-			for(int j = 0; j < n-1; j++) {
-				// if (lista.get(j).getValor() > lista.get(j+1).getValor())
-				if(aux_lista.getValor() > aux_lista.getProx().getValor()) {
-					aux = aux_lista.getValor();
-					aux_lista.setValor(aux_lista.getProx().getValor());
-					aux_lista.getProx().setValor(aux);
+			while (elemento_aux.getProx() != null) {
+				if(elemento_aux.getValor() > elemento_aux.getProx().getValor()) {
+					aux = elemento_aux.getValor();
+					elemento_aux.setValor(elemento_aux.getProx().getValor());
+					elemento_aux.getProx().setValor(aux);
 					troca = true;
 				}
-				aux_lista = aux_lista.getProx();
+				elemento_aux = elemento_aux.getProx();
 			}
-			if(troca == false)
+			if (troca == false)
 				break;
 		}
 		
-		return lista;
+		return primeiroElemento;
 	}
 	
 	public static List<Elemento> ordenarQuickLista(List<Elemento> lista, int inicio, int fim) {
@@ -162,7 +162,7 @@ public class Main {
 			elemento.setProx(new Elemento(Integer.valueOf(valor)));
 			elemento = elemento.getProx();
 		}
-		
+		// Responde o cliente com um ACK
 		mandarACK();
 
 		return elemento;
@@ -186,7 +186,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		socketServidor = new ServerSocket(2800);
-		int vetor[] = new int[20];
+		int vetor[] = new int[50000];
 		int indice = 0;
 		Elemento primeiroElemento = null;
 		Elemento elemento = new Elemento(-1);
@@ -214,7 +214,6 @@ public class Main {
 					indice ++;
 				} else {
 					elemento = atribuirLista(elemento, escolha[1]);
-					imprimirLista(primeiroElemento);
 				}
 			} else if (escolha[0].contentEquals("complexidadeVetor")) {
 				if (escolha[1].contentEquals("1")) {
@@ -239,11 +238,25 @@ public class Main {
 			} else if (escolha[0].contentEquals("complexidadeLista")) {
 				if (escolha[1].contentEquals("1")) {
 					mandarACK();
+					imprimirLista(primeiroElemento);
+					rt = Runtime.getRuntime();
+					inicio = System.currentTimeMillis();
+					primeiroElemento = ordenarBubbleLista(primeiroElemento);
+					tempo = System.currentTimeMillis() - inicio;
+					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
+					imprimirLista(primeiroElemento);
 				} else if (escolha[1].contentEquals("2")) {
 					mandarACK();
 				}
 			} else if (escolha[0].contentEquals("ordenar")) {
-				//TODO LEMBRAR DE MANDAR UM ACK PARA O SERVIDOR AO RECEBER A COMPLEXIDADE	(LB) 	
+				mandarACK();
+				imprimirVetor(vetor);
+				rt = Runtime.getRuntime();
+				inicio = System.currentTimeMillis();
+				Arrays.sort(vetor); // Estrutura de ordenação da linguagem
+				tempo = System.currentTimeMillis() - inicio;
+				memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
+				imprimirVetor(vetor);
 			} else if (escolha[0].contentEquals("relatorio")) {
 				if (escolha[1].contentEquals("1"))
 					mandarMensagem(String.valueOf(tempo));
