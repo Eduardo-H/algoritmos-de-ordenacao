@@ -14,7 +14,7 @@ public class Main {
 
 	static Socket socket;
 	static ServerSocket socketServidor;
-	static long inicio, fim;
+	static long inicio, tempo, memoria;
 	static Runtime rt;
 	
 	public static int[] ordenarBubbleVetor(int vetor[],int n) {
@@ -131,106 +131,125 @@ public class Main {
 			else
 				System.out.print(vetor[i]);
 		}
-		System.out.print("]");
+		System.out.print("]\n");
 	}
 	
-	public static void imprimirLista(List<Elemento> lista) {
+	public static void imprimirLista(Elemento elemento) {
 		System.out.print("[");
-		for (int i = 0; i < lista.size(); i++) {
-			if (i != lista.size() - 1)
-				System.out.print(lista.get(i).getValor() + ", ");
-			else
-				System.out.print(lista.get(i).getValor());
+		while (elemento.getProx() != null) {
+			System.out.print(elemento.getValor() + ", ");
+			elemento = elemento.getProx();
 		}
-		System.out.print("]");
+		System.out.print(elemento.getValor());
+		System.out.print("]\n");
 	}
 	
-	public static int[] atribuirVetor(BufferedReader requisicao) throws IOException {
-		int vetor[] = new int[20];
+	public static int[] atribuirVetor(int[] vetor, String valor, int i) throws IOException {
+		// Atribui o valor recebido na posição atual
+		vetor[i] = Integer.valueOf(valor);
 		
-		DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
-		
-		// Recebendo os valores do cliente
-		for (int i = 0; i < vetor.length; i++) {
-			String msgCliente = requisicao.readLine();
-			String escolha[] = msgCliente.split(":");
-			System.out.println("Número recebido: " + escolha[1]);
-			
-			requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			msgCliente = requisicao.readLine();
-			
-			vetor[i] = Integer.valueOf(escolha[1]);
-			
-			resposta.writeBytes("Valor " + escolha[1] + " recebido e armazenado");
-			resposta.writeBytes("\n"); // Fim da linha
-			resposta.flush(); // Manda para o cliente
-		}
+		// Responde o cliente com um ACK
+		mandarACK();
 		
 		return vetor;
 	}
 	
-	public static List<Elemento> atribuirLista(BufferedReader requisicao) throws IOException {
-		Elemento elemento = new Elemento(-1, 0);
-		List<Elemento> lista = new ArrayList<Elemento>();
-		
-		DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
-		
-		// Recebendo os valores do cliente
-		for (int i = 0; i < 20; i++) {
-			requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			String msgCliente = requisicao.readLine();
-			
-			// Atribuindo os valores recebidos na lista
-			if (elemento.getValor() == -1) {
-				elemento.setValor(Integer.valueOf(msgCliente));
-				elemento.setPosicao(i);
-				lista.add(elemento);
-			} else {
-				Elemento novo_elemento = new Elemento(Integer.valueOf(msgCliente), i);
-				elemento.setProx(novo_elemento);
-				lista.add(novo_elemento);
-				elemento = novo_elemento;
-			}
-
-			resposta.writeBytes("Valor " + msgCliente + " recebido e armazenado");
-			resposta.writeBytes("\n"); // Fim da linha
-			resposta.flush(); // Manda para o cliente
+	public static Elemento atribuirLista(Elemento elemento, String valor) throws IOException {		
+		// Atribuindo os valores recebidos na lista
+		if (elemento.getValor() == -1) {
+			elemento.setValor(Integer.valueOf(valor));
+		} else {
+			elemento.setProx(new Elemento(Integer.valueOf(valor)));
+			elemento = elemento.getProx();
 		}
 		
-		return lista;
+		mandarACK();
+
+		return elemento;
+	}
+	
+	public static void mandarACK() throws IOException {
+		DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
+		
+		resposta.writeBytes("ACK"); // Conteúdo da mensagem
+		resposta.writeBytes("\n"); // Fim da linha
+		resposta.flush(); // Manda para o cliente
+	}
+	
+	public static void mandarMensagem(String mensagem) throws IOException {
+		DataOutputStream resposta = new DataOutputStream(socket.getOutputStream());
+		
+		resposta.writeBytes(mensagem + ":ACK"); // Conteúdo da mensagem
+		resposta.writeBytes("\n"); // Fim da linha
+		resposta.flush(); // Manda para o cliente
 	}
 	
 	public static void main(String[] args) throws IOException {
 		socketServidor = new ServerSocket(2800);
 		int vetor[] = new int[20];
-		List<Elemento> lista = new ArrayList<Elemento>();
+		int indice = 0;
+		Elemento primeiroElemento = null;
+		Elemento elemento = new Elemento(-1);
 		
+		System.out.println("Aguardando mensagem...");
 		while (true) {
-			System.out.println("Aguardando mensagem...");
 			socket = socketServidor.accept(); // Aceitando uma requesição quando chegar
-			
+
 			BufferedReader requisicao = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String msgCliente = requisicao.readLine();
 			String escolha[] = new String[2];
 			escolha = msgCliente.split(":");
 			
 			if (escolha[0].contentEquals("atribuicaoVetor")) {
-				vetor = atribuirVetor(requisicao);
+				vetor = atribuirVetor(vetor, escolha[1], indice);
+				indice++;
+				
+				// Caso o indice tenha chego no fim do vetor
+				if (indice == vetor.length)
+					indice = 0; // Reseta o indice para possível atribuição futura
 			} else if (escolha[0].contentEquals("atribuicaoLista")) {
-				lista = atribuirLista(requisicao);
-			} else if (escolha[0].contentEquals("complexidade")) {
-				
+				if (indice == 0) {
+					primeiroElemento = atribuirLista(elemento, escolha[1]);
+					elemento = primeiroElemento;
+					indice ++;
+				} else {
+					elemento = atribuirLista(elemento, escolha[1]);
+					imprimirLista(primeiroElemento);
+				}
+			} else if (escolha[0].contentEquals("complexidadeVetor")) {
+				if (escolha[1].contentEquals("1")) {
+					mandarACK();
+					imprimirVetor(vetor);
+					rt = Runtime.getRuntime();
+					inicio = System.currentTimeMillis();
+					vetor = ordenarBubbleVetor(vetor, vetor.length);
+					tempo = System.currentTimeMillis() - inicio;
+					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
+					imprimirVetor(vetor);
+				} else if (escolha[1].contentEquals("2")) {
+					mandarACK();
+					imprimirVetor(vetor);
+					rt = Runtime.getRuntime();
+					inicio = System.currentTimeMillis();
+					vetor = ordenarQuickVetor(vetor, 0, vetor.length - 1);
+					tempo = System.currentTimeMillis() - inicio;
+					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
+					imprimirVetor(vetor);
+				}
+			} else if (escolha[0].contentEquals("complexidadeLista")) {
+				if (escolha[1].contentEquals("1")) {
+					mandarACK();
+				} else if (escolha[1].contentEquals("2")) {
+					mandarACK();
+				}
 			} else if (escolha[0].contentEquals("ordenar")) {
-				
+				//TODO LEMBRAR DE MANDAR UM ACK PARA O SERVIDOR AO RECEBER A COMPLEXIDADE	(LB) 	
+			} else if (escolha[0].contentEquals("relatorio")) {
+				if (escolha[1].contentEquals("1"))
+					mandarMensagem(String.valueOf(tempo));
+				else if (escolha[1].contentEquals("2"))
+					mandarMensagem(String.valueOf(memoria));
 			}
-
-//			rt = Runtime.getRuntime();
-//			inicio = System.currentTimeMillis();
-//			vetor = ordenarBubbleVetor(vetor, vetor.length);
-//			fim = System.currentTimeMillis() - inicio;
-//			System.out.println("Memória usada: " + (Runtime.getRuntime().freeMemory() - rt.freeMemory()));
-//			System.out.println("Tempo para ordenação em milisegundos: " + fim + "ms\n"
-//					+ "Tempo para ordenação em segundos: " + fim/1000 + "s");
 		}
 	}
 }
