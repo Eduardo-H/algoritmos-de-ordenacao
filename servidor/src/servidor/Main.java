@@ -76,6 +76,7 @@ public class Main {
 		
 		while (elemento.getProx() != null) {
 			troca = false;
+			elemento_aux = elemento; // Volta o elemento_aux para o primeiro elemento
 			while (elemento_aux.getProx() != null) {
 				if(elemento_aux.getValor() > elemento_aux.getProx().getValor()) {
 					aux = elemento_aux.getValor();
@@ -85,10 +86,10 @@ public class Main {
 				}
 				elemento_aux = elemento_aux.getProx();
 			}
+			
 			if (troca == false)
 				break;
 		}
-		
 		return primeiroElemento;
 	}
 	
@@ -195,7 +196,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		socketServidor = new ServerSocket(2800);
-		int vetor[] = new int[250000];
+		int vetor[] = new int[10000];
 		int indice = 0;
 		Elemento primeiroElemento = null;
 		Elemento elemento = new Elemento(-1);
@@ -209,14 +210,14 @@ public class Main {
 			String escolha[] = new String[2];
 			escolha = msgCliente.split(":");
 			
-			if (escolha[0].contentEquals("atribuicaoVetor")) {
+			if (escolha[0].contentEquals("atribuicaoVetor")) { // Faz atribuicão no vetor
 				vetor = atribuirVetor(vetor, escolha[1], indice);
 				indice++;
 				
 				// Caso o indice tenha chego no fim do vetor
 				if (indice == vetor.length)
 					indice = 0; // Reseta o indice para possível atribuição futura
-			} else if (escolha[0].contentEquals("atribuicaoLista")) {
+			} else if (escolha[0].contentEquals("atribuicaoLista")) { // Faz atribuicão na lista
 				if (indice == 0) {
 					primeiroElemento = atribuirLista(elemento, escolha[1]);
 					elemento = primeiroElemento;
@@ -224,47 +225,49 @@ public class Main {
 				} else {
 					elemento = atribuirLista(elemento, escolha[1]);
 				}
-			} else if (escolha[0].contentEquals("complexidadeVetor")) {
+			} else if (escolha[0].contentEquals("complexidadeVetor")) { // Escolhe a complexidade para ordenar o vetor
 				if (escolha[1].contentEquals("1")) {
 					mandarACK();
-					// imprimirVetor(vetor);
+					imprimirVetor(vetor);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
 					vetor = ordenarBubbleVetor(vetor, vetor.length);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-					// imprimirVetor(vetor);
+					imprimirVetor(vetor);
 				} else if (escolha[1].contentEquals("2")) {
 					mandarACK();
-					// imprimirVetor(vetor);
+					imprimirVetor(vetor);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
 					vetor = ordenarQuickVetor(vetor, 0, vetor.length - 1);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-					// imprimirVetor(vetor);
+					imprimirVetor(vetor);
 				}
-			} else if (escolha[0].contentEquals("complexidadeLista")) {
+			} else if (escolha[0].contentEquals("complexidadeLista")) { // Escolhe a complexidade para ordenar a lista
 				if (escolha[1].contentEquals("1")) {
 					mandarACK();
-					// imprimirLista(primeiroElemento);
+					imprimirLista(primeiroElemento);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
 					primeiroElemento = ordenarBubbleLista(primeiroElemento);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-					// imprimirLista(primeiroElemento);
+					imprimirLista(primeiroElemento);
+					indice = 0;
 				} else if (escolha[1].contentEquals("2")) {
 					mandarACK();
-					// imprimirLista(primeiroElemento);
+					imprimirLista(primeiroElemento);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
 					primeiroElemento = ordenarQuickLista(primeiroElemento);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-					// imprimirLista(primeiroElemento);
+					imprimirLista(primeiroElemento);
+					indice = 0;
 				}
-			} else if (escolha[0].contentEquals("ordenar")) {
+			} else if (escolha[0].contentEquals("ordenar")) { // Pede para ordenar o vetor com o método da linguagem
 				mandarACK();
 				// imprimirVetor(vetor);
 				rt = Runtime.getRuntime();
@@ -273,7 +276,7 @@ public class Main {
 				tempo = System.currentTimeMillis() - inicio;
 				memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
 				// imprimirVetor(vetor);
-			} else if (escolha[0].contentEquals("relatorio")) {
+			} else if (escolha[0].contentEquals("relatorio")) { // Envia o relatório de tempo e memória
 				if (escolha[1].contentEquals("1"))
 					mandarMensagem(String.valueOf(tempo));
 				else if (escolha[1].contentEquals("2"))

@@ -37,7 +37,7 @@ public class Main{
 	
 	public static void atribuicaoVetor(int tamanho) {
 		for (int i = 0; i < tamanho; i++) {
-			int numero = aleatorio.nextInt(tamanho);
+			int numero = aleatorio.nextInt(tamanho); // Gera um valor aleatório
 
 			try {
 				mandarMensagem("atribuicaoVetor", String.valueOf(numero));
@@ -69,7 +69,7 @@ public class Main{
 		while (true) { // Enquanto não receber um ACK		
 			String msgServidor = receberMensagem();
 			if (msgServidor.equals("ACK")){ // Se a mensagem recebida for um ACK
-				System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem							
+				// System.out.println("Resposta do Servidor: " + msgServidor); // Mostra a mensagem							
 				return;
 			}
 		}
@@ -108,9 +108,9 @@ public class Main{
 			
 			// Segundo passo: enviar os valores
 			if (tipo == 1 || tipo == 3) {
-				atribuicaoVetor(250000);
+				atribuicaoVetor(10000);
 			} else if (tipo == 2)			
-				atribuicaoLista(250000);
+				atribuicaoLista(10000);
 			else
 				System.out.println("Opção inválida.");
 			
