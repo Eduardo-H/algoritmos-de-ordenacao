@@ -92,7 +92,7 @@ public class Main {
 		return primeiroElemento;
 	}
 	
-	public static Elemento quickSortLista(Elemento elemento) {
+	public static Elemento ordenarQuickLista(Elemento elemento) {
 		if (elemento == null)
 			return null;
 
@@ -123,44 +123,13 @@ public class Main {
 			pivo.setValor(temp);
 
 			temporario.setProx(null);
-			quickSortLista(elemento);
+			ordenarQuickLista(elemento);
 			temporario.setProx(particao);
 		}
 
-		quickSortLista(elementoAux.getProx());
+		ordenarQuickLista(elementoAux.getProx());
 
 		return elemento;
-	}
-	
-	public static List<Elemento> ordenarQuickLista(List<Elemento> lista, int inicio, int fim) {
-		if (inicio < fim) {
-			int pIndice = quickTrocaLista(lista, inicio, fim);
-			ordenarQuickLista(lista, inicio, pIndice - 1);
-			ordenarQuickLista(lista, pIndice + 1, fim);
-		}
-		
-		return lista;
-	}
-
-	public static int quickTrocaLista(List<Elemento> lista, int inicio, int fim) {
-		int aux;
-		int pivot = lista.get(fim).getValor();
-		int pIndice = inicio;
-		
-		for (int i = inicio; i < fim; i++) {
-			if (lista.get(i).getValor() <= pivot) {
-				aux = lista.get(i).getValor();
-				lista.get(i).setValor(lista.get(pIndice).getValor());
-				lista.get(pIndice).setValor(aux);
-				pIndice ++;
-			}
-		}
-		
-		aux = lista.get(pIndice).getValor();
-		lista.get(pIndice).setValor(lista.get(fim).getValor());
-		lista.get(fim).setValor(aux);
-		
-		return pIndice;
 	}
 	
 	public static void imprimirVetor(int[] vetor) {
@@ -290,7 +259,7 @@ public class Main {
 					// imprimirLista(primeiroElemento);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
-					primeiroElemento = quickSortLista(primeiroElemento);
+					primeiroElemento = ordenarQuickLista(primeiroElemento);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
 					// imprimirLista(primeiroElemento);
