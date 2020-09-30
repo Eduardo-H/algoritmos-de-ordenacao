@@ -108,9 +108,9 @@ public class Main{
 			
 			// Segundo passo: enviar os valores
 			if (tipo == 1 || tipo == 3) {
-				atribuicaoVetor(50000);
+				atribuicaoVetor(250000);
 			} else if (tipo == 2)			
-				atribuicaoLista(50000);
+				atribuicaoLista(250000);
 			else
 				System.out.println("Opção inválida.");
 			

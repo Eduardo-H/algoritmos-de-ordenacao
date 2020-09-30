@@ -92,6 +92,46 @@ public class Main {
 		return primeiroElemento;
 	}
 	
+	public static Elemento quickSortLista(Elemento elemento) {
+		if (elemento == null)
+			return null;
+
+		Elemento elementoAux = elemento;
+		Elemento proxElementoAux = elemento.getProx();
+		Elemento pivo = elemento;
+		Elemento temporario = null;
+		Elemento particao = null;
+		int temp;
+
+		while (proxElementoAux != null) {
+			if (proxElementoAux.getValor() < pivo.getValor()) {
+				temporario = elementoAux;
+				particao = elementoAux.getProx();
+
+				elementoAux = elementoAux.getProx();
+
+				temp = elementoAux.getValor();
+				elementoAux.setValor(proxElementoAux.getValor());
+				proxElementoAux.setValor(temp);
+			}
+			proxElementoAux = proxElementoAux.getProx();
+		}
+
+		if (elementoAux != elemento) {
+			temp = elementoAux.getValor();
+			elementoAux.setValor(pivo.getValor());
+			pivo.setValor(temp);
+
+			temporario.setProx(null);
+			quickSortLista(elemento);
+			temporario.setProx(particao);
+		}
+
+		quickSortLista(elementoAux.getProx());
+
+		return elemento;
+	}
+	
 	public static List<Elemento> ordenarQuickLista(List<Elemento> lista, int inicio, int fim) {
 		if (inicio < fim) {
 			int pIndice = quickTrocaLista(lista, inicio, fim);
@@ -186,7 +226,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		socketServidor = new ServerSocket(2800);
-		int vetor[] = new int[50000];
+		int vetor[] = new int[250000];
 		int indice = 0;
 		Elemento primeiroElemento = null;
 		Elemento elemento = new Elemento(-1);
@@ -218,45 +258,52 @@ public class Main {
 			} else if (escolha[0].contentEquals("complexidadeVetor")) {
 				if (escolha[1].contentEquals("1")) {
 					mandarACK();
-					imprimirVetor(vetor);
+					// imprimirVetor(vetor);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
 					vetor = ordenarBubbleVetor(vetor, vetor.length);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-					imprimirVetor(vetor);
+					// imprimirVetor(vetor);
 				} else if (escolha[1].contentEquals("2")) {
 					mandarACK();
-					imprimirVetor(vetor);
+					// imprimirVetor(vetor);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
 					vetor = ordenarQuickVetor(vetor, 0, vetor.length - 1);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-					imprimirVetor(vetor);
+					// imprimirVetor(vetor);
 				}
 			} else if (escolha[0].contentEquals("complexidadeLista")) {
 				if (escolha[1].contentEquals("1")) {
 					mandarACK();
-					imprimirLista(primeiroElemento);
+					// imprimirLista(primeiroElemento);
 					rt = Runtime.getRuntime();
 					inicio = System.currentTimeMillis();
 					primeiroElemento = ordenarBubbleLista(primeiroElemento);
 					tempo = System.currentTimeMillis() - inicio;
 					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-					imprimirLista(primeiroElemento);
+					// imprimirLista(primeiroElemento);
 				} else if (escolha[1].contentEquals("2")) {
 					mandarACK();
+					// imprimirLista(primeiroElemento);
+					rt = Runtime.getRuntime();
+					inicio = System.currentTimeMillis();
+					primeiroElemento = quickSortLista(primeiroElemento);
+					tempo = System.currentTimeMillis() - inicio;
+					memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
+					// imprimirLista(primeiroElemento);
 				}
 			} else if (escolha[0].contentEquals("ordenar")) {
 				mandarACK();
-				imprimirVetor(vetor);
+				// imprimirVetor(vetor);
 				rt = Runtime.getRuntime();
 				inicio = System.currentTimeMillis();
 				Arrays.sort(vetor); // Estrutura de ordenação da linguagem
 				tempo = System.currentTimeMillis() - inicio;
 				memoria = (Runtime.getRuntime().freeMemory() - rt.freeMemory());
-				imprimirVetor(vetor);
+				// imprimirVetor(vetor);
 			} else if (escolha[0].contentEquals("relatorio")) {
 				if (escolha[1].contentEquals("1"))
 					mandarMensagem(String.valueOf(tempo));
